@@ -1,0 +1,25 @@
+{
+  "ComPort": "COM4",
+  "DCCalibrationData": [ 100, 100 ],
+  "DCMotorPort": [
+    "M1",
+    "M2"
+  ],
+  "SvCalibrationData": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+  "ServomotorPort": [
+    "D9",
+    "D10",
+    "D11",
+    "D12"
+  ],
+  "SensorPort": {
+    "A0": "PIDPUSHSWITCH",
+    "A1": "PIDPUSHSWITCH",
+    "A2": "PIDPUSHSWITCH",
+    "A3": "PIDPUSHSWITCH",
+    "A4": "PIDLED",
+    "A5": "PIDIRPHOTOREFLECTOR",
+    "A6": "PIDPUSHSWITCH",
+    "A7": "PIDPUSHSWITCH"
+  }
+}
