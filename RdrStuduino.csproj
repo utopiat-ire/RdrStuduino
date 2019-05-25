@@ -70,11 +70,24 @@
     <None Include="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="サンプル\door.rdr" />
+    <None Include="サンプル\function.rdr" />
+    <None Include="サンプル\LED.rdr" />
+    <None Include="サンプル\Switch.rdr" />
+    <None Include="サンプル\var.rdr" />
   </ItemGroup>
   <ItemGroup>
     <None Include="board.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="foot.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="head.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
