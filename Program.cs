@@ -38,7 +38,6 @@ namespace Produire.Translator
 
 			PluginManager pluginManager = new PluginManager();
 			var plugin = PluginManager.Load(typeof(Program).Assembly) as PNamespacePlugin;
-			plugin.AddType(typeof(ArduinoLib));
 			pluginManager.AddStandard(plugin);
 
 			if (inofile == null)

@@ -44,16 +44,18 @@ namespace Produire.Translator
 			actions.Add(PhraseTypes.繰り返し文, new StatementDelegate(GS繰り返し文));
 			actions.Add(PhraseTypes.もし文, new StatementDelegate(GSもし文));
 			actions.Add(PhraseTypes.分岐文, new StatementDelegate(GS分岐文));
-			actions.Add(PhraseTypes.代入文, new StatementDelegate(GS代入文));
+
 			actions.Add(PhraseTypes.WithStatement, new StatementDelegate(GSWith));
 			actions.Add(PhraseTypes.TryCatchStatement, new StatementDelegate(GSTryCatch));
 			actions.Add(PhraseTypes.AssignEventStatement, new StatementDelegate(GSAssignEvent));
-			actions.Add(PhraseTypes.NoArgsProcedureCallStatement, new StatementDelegate(GSNoArgsProcedureCall));
+			actions.Add(PhraseTypes.NoArgsProcedureCallStatement, new StatementDelegate(GS引数無し手順呼出し));
 			actions.Add(PhraseTypes.CreateObjectExpression, new StatementDelegate(GSCreateObject));
 			actions.Add(PhraseTypes.SetPropertyValueStatement, new StatementDelegate(GSSetPropertyValue));
 
+			actions.Add(PhraseTypes.代入文, new StatementDelegate(GS代入文));
+			actions.Add(PhraseTypes.ProcessAndAssignStatement, new StatementDelegate(GS呼出し代入文));
+
 			actions.Add(PhraseTypes.ParseErrorStatements, new StatementDelegate(GSParseError));
-			actions.Add(PhraseTypes.ProcessAndAssignStatement, new StatementDelegate(GSProcessAndAssign));
 			actions.Add(PhraseTypes.変数宣言句, new StatementDelegate(GS変数宣言句));
 			actions.Add(PhraseTypes.DeclareFieldStatement, new StatementDelegate(GS変数宣言句));
 			actions.Add(PhraseTypes.返す文, new StatementDelegate(GS返す文));
@@ -66,7 +68,6 @@ namespace Produire.Translator
 			evals.Add(PhraseTypes.固定手順定義, new CodeElementDelegate(GE手順定義));
 			evals.Add(PhraseTypes.種類定義, new CodeElementDelegate(GE種類定義));
 			evals.Add(PhraseTypes.NamespacePart, new CodeElementDelegate(GENamespacePart));
-
 		}
 
 		private void InitPhraseDelegate()
@@ -77,10 +78,10 @@ namespace Produire.Translator
 
 			actions.Add(PhraseTypes.NumberTokenInt, new StatementDelegate(D整数字句));
 			actions.Add(PhraseTypes.NumberTokenLong, new StatementDelegate(D長整数字句));
+			actions.Add(PhraseTypes.NumberTokenFloat, new StatementDelegate(D浮動小数字句));
 			actions.Add(PhraseTypes.真値字句, new StatementDelegate(D真偽値定数));
 			actions.Add(PhraseTypes.偽値字句, new StatementDelegate(D真偽値定数));
 			actions.Add(PhraseTypes.バツ字句, new StatementDelegate(Dバツ字句));
-			actions.Add(PhraseTypes.アンパサンド字句, new StatementDelegate(Dアンパサンド字句));
 			actions.Add(PhraseTypes.加算演算子字句, new StatementDelegate(D演算子字句));
 			actions.Add(PhraseTypes.減算演算子字句, new StatementDelegate(D演算子字句));
 			actions.Add(PhraseTypes.乗算演算子字句, new StatementDelegate(D演算子字句));
@@ -98,13 +99,7 @@ namespace Produire.Translator
 			actions.Add(PhraseTypes.連結文字列句, new StatementDelegate(D連結文字列句));
 			actions.Add(PhraseTypes.配列句, new StatementDelegate(D配列句));
 			actions.Add(PhraseTypes.辞書定数句, new StatementDelegate(D辞書定数句));
-			actions.Add(PhraseTypes.UserSingleParameter, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.UserParticleParameter, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.ユーザ主補語定義, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.UserDefaultComplement, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.ProcedureExtendSingleParameter, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.ProcedureExtendParticleParameter, new StatementDelegate(D手順補語));
-			actions.Add(PhraseTypes.NoArgsProcedureCallPhrase, new StatementDelegate(GSNoArgsProcedureCall));
+			actions.Add(PhraseTypes.NoArgsProcedureCallPhrase, new StatementDelegate(GS引数無し手順呼出し));
 
 			actions.Add(PhraseTypes.変数字句, new StatementDelegate(D変数字句));
 			actions.Add(PhraseTypes.レシーバ呼出句, new StatementDelegate(Dレシーバ呼出句));
@@ -196,7 +191,7 @@ namespace Produire.Translator
 			for (int i = 0; i < name.Length; i++)
 			{
 				char c = name[i];
-				if (Letters.IndexOf(c) == -1) c = 'R';
+				if (Letters.IndexOf(c) == -1) c = Letters[i % 28 + 10];
 				builder.Append(c);
 			}
 			return builder.ToString();
@@ -512,35 +507,56 @@ void artecRobotSetup() {
 		private void GSStaticCall(IStatement statement, StringWriter writer)
 		{
 			var st = statement as StaticCallExpression;
-			string code = "";
-			if (st.MethodInfo is 外部手順定義)
+			TranscriptSentence(writer, st.MethodInfo, st.Expression);
+		}
+
+		private void GSDynamicCall(IStatement statement, StringWriter writer)
+		{
+			var st = statement as DynamicCallExpression;
+			手順定義 methodInfo = st.Overloads[0];
+			foreach (var method in st.Overloads)
 			{
-				var attrs = (st.MethodInfo as 外部手順定義).MethodInfo.GetCustomAttributes(typeof(翻訳Attribute), false);
+				if (method is Procedure)
+				{
+					methodInfo = method;
+					break;
+				}
+			}
+			TranscriptSentence(writer, methodInfo, st.Expression);
+		}
+
+		private void TranscriptSentence(StringWriter writer, 手順定義 methodInfo, IPrototypeExpression expr)
+		{
+			string code = "";
+			if (methodInfo is 外部手順定義)
+			{
+				var attrs = (methodInfo as 外部手順定義).MethodInfo.GetCustomAttributes(typeof(翻訳Attribute), false);
 				if (attrs.Length > 0) code = (attrs[0] as 翻訳Attribute).Code;
 			}
-			else if (st.MethodInfo is Procedure)
+			else if (methodInfo is Procedure)
 			{
-				code = funcNameList[st.MethodInfo as Procedure] + "()";
+				var procedure = methodInfo as Procedure;
+				code = procedure.GetAnnotationParam("翻訳");
+				string funcName;
+				if (code == null && funcNameList.TryGetValue(procedure, out funcName))
+				{
+					code = funcName + "()";
+				}
 			}
-			foreach (var item in st.MethodInfo.Complements)
+			foreach (var item in methodInfo.Complements)
 			{
-				var pc = item as 外部実補語定義;
+				var pc = item as 実補語定義;
 
 				if (pc != null)
 				{
 					IPhrase phrase;
-					st.Expression.TryGetPhrase(pc.Particle, out phrase);
+					expr.TryGetPhrase(pc.Particle, out phrase);
 					code = code.Replace("【" + pc.ParameterName + "】", GenerateString(phrase));
 				}
 			}
 			writer.Write(code);
 		}
-		private void GSDynamicCall(IStatement statement, StringWriter writer)
-		{
-			var st = statement as DynamicCallExpression;
-			var phrases = st.Phrases;
-			Generate(st.Expression, writer);
-		}
+
 		private void GSCreateObject(IStatement statement, StringWriter writer)
 		{
 			var st = statement as CreateObjectExpression;
@@ -551,7 +567,7 @@ void artecRobotSetup() {
 			var st = statement as SetPropertyValueStatement;
 			GSSentence(st.Sentence, writer);
 		}
-		private void GSNoArgsProcedureCall(IStatement statement, StringWriter writer)
+		private void GS引数無し手順呼出し(IStatement statement, StringWriter writer)
 		{
 			writer.Write(statement);
 		}
@@ -585,16 +601,13 @@ void artecRobotSetup() {
 			varNameList[st.Variable] = name;
 			writer.Write("float " + name);
 		}
-		private void GSProcessAndAssign(IStatement statement, StringWriter writer)
+		private void GS呼出し代入文(IStatement statement, StringWriter writer)
 		{
 			var st = statement as ProcessAndAssignStatement;
-			IPhrase[] phrases = st.Phrases;
 
-			//変数
-			Generate(st.VariablePhrase, writer);
-
-			//式
-			Generate(st.ExprPhrase, writer);
+			Generate(st.VariablePhrase, writer);    //変数
+			writer.Write(" = ");
+			Generate(st.ExprPhrase, writer);    //式
 		}
 
 		private void GSParseError(IStatement statement, StringWriter writer)
@@ -802,33 +815,40 @@ void artecRobotSetup() {
 			Generate(ph.Prototype, writer);
 		}
 
-		private void D手順補語(IStatement statement, StringWriter writer)
-		{
-			var ph = statement as IUserParameter;
-			Generate(ph.Phrases, writer);
-		}
-
 		private void Dブロック句(IStatement phrase, StringWriter writer)
 		{
 			var ph = phrase as ブロック句;
 			Generate(ph.Statements, writer);
 		}
 
+		/// <summary>
+		/// 整数定数
+		/// </summary>
 		private void D整数字句(IStatement phrase, StringWriter writer)
 		{
-			writer.Write(phrase.Text);
+			var ph = phrase as 数値字句<int>;
+			writer.Write(ph.NumberValue.ToString());
 		}
 		private void D長整数字句(IStatement phrase, StringWriter writer)
 		{
-			writer.Write(phrase.Text);
+			var ph = phrase as 数値字句<long>;
+			writer.Write(ph.NumberValue.ToString());
+		}
+		private void D浮動小数字句(IStatement phrase, StringWriter writer)
+		{
+			var ph = phrase as 数値字句<float>;
+			writer.Write(ph.NumberValue.ToString());
 		}
 		private void D真偽値定数(IStatement phrase, StringWriter writer)
 		{
-			writer.Write(phrase.Text);
+			if (phrase is 真値字句)
+				writer.Write("True");
+			else
+				writer.Write("False");
 		}
 		private void Dバツ字句(IStatement phrase, StringWriter writer)
 		{
-			writer.Write(phrase.Text);
+			writer.Write("False");
 		}
 
 		private void D無(IStatement phrase, StringWriter writer)
@@ -842,12 +862,6 @@ void artecRobotSetup() {
 			{
 				Generate(item, writer);
 			}
-		}
-		private void Dアンパサンド字句(IStatement phrase, StringWriter writer)
-		{
-		}
-		private void DExclamationToken(IStatement phrase, StringWriter writer)
-		{
 		}
 		private void D演算子字句(IStatement phrase, StringWriter writer)
 		{

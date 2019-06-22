@@ -75,6 +75,8 @@
     <None Include="サンプル\LED.rdr" />
     <None Include="サンプル\Switch.rdr" />
     <None Include="サンプル\var.rdr" />
+    <None Include="サンプル\スタディーノ.プロデル" />
+    <None Include="サンプル\掃除ロボット.rdr" />
   </ItemGroup>
   <ItemGroup>
     <None Include="board.bat">
@@ -88,6 +90,8 @@
     <Content Include="head.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Produire.Core.dll" />
+    <Content Include="utopiat.Host.dll" />
     <None Include="LICENSE" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
