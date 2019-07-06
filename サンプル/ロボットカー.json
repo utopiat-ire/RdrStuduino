@@ -1,0 +1,8 @@
+{
+  "DCMotorPort": [
+    "M1"
+  ],
+  "ServomotorPort": [
+    "D9"
+  ]
+}

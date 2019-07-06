@@ -1,0 +1,12 @@
+{
+  "SensorPort": {
+    "A0": "PIDLED",
+    "A1": "PIDLED",
+    "A2": "PIDPUSHSWITCH",
+    "A3": "PIDBUZZER",
+    "A4": "PIDPUSHSWITCH",
+    "A5": "PIDPUSHSWITCH",
+    "A6": "PIDPUSHSWITCH",
+    "A7": "PIDPUSHSWITCH"
+  }
+}
