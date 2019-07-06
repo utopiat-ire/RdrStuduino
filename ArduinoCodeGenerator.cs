@@ -185,6 +185,14 @@ namespace Produire.Translator
 		}
 
 		const string Letters = "0123456789abcdefghijklmnopqrstuwvxyzABCDEFGHIJKLMNOPQRSTUWVXYZ";
+
+		Settings settings;
+		public Settings Settings
+		{
+			get { return settings; }
+			set { settings = value; }
+		}
+
 		private string ConvertToAscii(string name)
 		{
 			StringBuilder builder = new StringBuilder();
@@ -199,26 +207,18 @@ namespace Produire.Translator
 
 		private void WriteSettings(StringWriter writer)
 		{
-			string settingConfig = "settings.json";
-			string json;
-			if (File.Exists(settingConfig))
-				json = File.ReadAllText(settingConfig);
-			else
-				json = "";
-
-			Settings setting = JsonConvert.DeserializeObject<Settings>(json);
 			writer.Write(@"
 // ---------------------------------------
 // Servomotor calibration data
 // ---------------------------------------
 ");
-			writer.Write("char SvCalibrationData[] = { " + string.Join(", ", setting.SvCalibrationData) + " };");
+			writer.Write("char SvCalibrationData[] = { " + string.Join(", ", settings.SvCalibrationData) + " };");
 			writer.Write(@"
 // ---------------------------------------
 // DC motor calibration data
 // ---------------------------------------
 ");
-			writer.Write("byte DCCalibrationData[] = {" + string.Join(", ", setting.DCCalibrationData) + " };");
+			writer.Write("byte DCCalibrationData[] = {" + string.Join(", ", settings.DCCalibrationData) + " };");
 			writer.Write(@"
 // ---------------------------------------
 // prototype declaration
@@ -241,15 +241,15 @@ void artecRobotSetup() {
 	board.SetServomotorCalibration(SvCalibrationData);
 	board.SetDCMotorCalibration(DCCalibrationData);
 ");
-			foreach (var item in setting.DCMotorPort)
+			foreach (var item in settings.DCMotorPort)
 			{
 				writer.WriteLine("\tboard.InitDCMotorPort(PORT_" + item + ");");
 			}
-			foreach (var item in setting.ServomotorPort)
+			foreach (var item in settings.ServomotorPort)
 			{
 				writer.WriteLine("\tboard.InitServomotorPort(PORT_" + item + ");");
 			}
-			foreach (var pair in setting.SensorPort)
+			foreach (var pair in settings.SensorPort)
 			{
 				writer.WriteLine("\tboard.InitSensorPort(PORT_" + pair.Key + ", " + pair.Value + ");");
 			}

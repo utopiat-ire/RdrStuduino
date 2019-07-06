@@ -76,7 +76,14 @@
     <None Include="サンプル\Switch.rdr" />
     <None Include="サンプル\var.rdr" />
     <None Include="サンプル\スタディーノ.プロデル" />
+    <None Include="サンプル\ロボットカー.json" />
+    <None Include="サンプル\ロボットカー.rdr" />
+    <None Include="サンプル\信号機%28完成版%29.json" />
+    <None Include="サンプル\信号機%28完成版%29.rdr" />
+    <None Include="サンプル\掃除ロボット.json" />
     <None Include="サンプル\掃除ロボット.rdr" />
+    <None Include="サンプル\自動ドア.json" />
+    <None Include="サンプル\自動ドア.rdr" />
   </ItemGroup>
   <ItemGroup>
     <None Include="board.bat">

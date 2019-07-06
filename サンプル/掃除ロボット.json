@@ -1,0 +1,19 @@
+{
+  "DCMotorPort": [
+    "M2"
+  ],
+  "ServomotorPort": [
+    "D9"
+  ],
+  "SensorPort": {
+    "A0": "PIDPUSHSWITCH",
+    "A1": "PIDPUSHSWITCH",
+    "A2": "PIDPUSHSWITCH",
+    "A3": "PIDPUSHSWITCH",
+    "A4": "PIDIRPHOTOREFLECTOR",
+    "A5": "PIDPUSHSWITCH",
+    "A6": "PIDPUSHSWITCH",
+    "A7": "PIDPUSHSWITCH"
+  }
+
+}
