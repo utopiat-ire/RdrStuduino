@@ -243,14 +243,17 @@ void artecRobotSetup() {
 ");
 			foreach (var item in settings.DCMotorPort)
 			{
+				if (string.IsNullOrEmpty(item)) continue;
 				writer.WriteLine("\tboard.InitDCMotorPort(PORT_" + item + ");");
 			}
 			foreach (var item in settings.ServomotorPort)
 			{
+				if (string.IsNullOrEmpty(item)) continue;
 				writer.WriteLine("\tboard.InitServomotorPort(PORT_" + item + ");");
 			}
 			foreach (var pair in settings.SensorPort)
 			{
+				if (string.IsNullOrEmpty(pair.Value)) continue;
 				writer.WriteLine("\tboard.InitSensorPort(PORT_" + pair.Key + ", " + pair.Value + ");");
 			}
 			writer.Write(@"
