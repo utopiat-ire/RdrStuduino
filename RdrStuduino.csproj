@@ -76,6 +76,7 @@
     <None Include="サンプル\Switch.rdr" />
     <None Include="サンプル\var.rdr" />
     <None Include="サンプル\スタディーノ.プロデル" />
+    <None Include="サンプル\プロデルdeStuduinoエディタ.rdr" />
     <None Include="サンプル\ロボットカー.json" />
     <None Include="サンプル\ロボットカー.rdr" />
     <None Include="サンプル\信号機%28完成版%29.json" />
@@ -100,6 +101,9 @@
     <Content Include="Produire.Core.dll" />
     <Content Include="utopiat.Host.dll" />
     <None Include="LICENSE" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
