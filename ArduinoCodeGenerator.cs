@@ -45,7 +45,7 @@ namespace Produire.Translator
 			actions.Add(PhraseTypes.もし文, new StatementDelegate(GSもし文));
 			actions.Add(PhraseTypes.分岐文, new StatementDelegate(GS分岐文));
 
-			actions.Add(PhraseTypes.WithStatement, new StatementDelegate(GSWith));
+			actions.Add(PhraseTypes.対象限定文, new StatementDelegate(GSWith));
 			actions.Add(PhraseTypes.TryCatchStatement, new StatementDelegate(GSTryCatch));
 			actions.Add(PhraseTypes.AssignEventStatement, new StatementDelegate(GSAssignEvent));
 			actions.Add(PhraseTypes.NoArgsProcedureCallStatement, new StatementDelegate(GS引数無し手順呼出し));
@@ -73,8 +73,6 @@ namespace Produire.Translator
 		private void InitPhraseDelegate()
 		{
 			actions.Add(PhraseTypes.ArithmeticFormula, new StatementDelegate(D数式));
-			actions.Add(PhraseTypes.TermFormula, new StatementDelegate(D数式));
-			actions.Add(PhraseTypes.FactorFormula, new StatementDelegate(D数式));
 
 			actions.Add(PhraseTypes.NumberTokenInt, new StatementDelegate(D整数字句));
 			actions.Add(PhraseTypes.NumberTokenLong, new StatementDelegate(D長整数字句));
@@ -94,7 +92,7 @@ namespace Produire.Translator
 			actions.Add(PhraseTypes.空白字句, new StatementDelegate(D空白字句));
 			actions.Add(PhraseTypes.コメント字句, new StatementDelegate(D空白字句));
 
-			actions.Add(PhraseTypes.文字列定数字句, new StatementDelegate(D文字列定数字句));
+			actions.Add(PhraseTypes.文字列字句片, new StatementDelegate(D文字列字句片));
 			actions.Add(PhraseTypes.文字列定数句, new StatementDelegate(D文字列定数句));
 			actions.Add(PhraseTypes.連結文字列句, new StatementDelegate(D連結文字列句));
 			actions.Add(PhraseTypes.配列句, new StatementDelegate(D配列句));
@@ -128,13 +126,13 @@ namespace Produire.Translator
 			actions.Add(PhraseTypes.等価比較演算子字句, new StatementDelegate(D等価比較演算子字句));
 
 			actions.Add(PhraseTypes.四角囲い句, new StatementDelegate(D囲い句));
-			actions.Add(PhraseTypes.DoubleQuotedPhrase, new StatementDelegate(D囲い句));
+			actions.Add(PhraseTypes.DoubleQuoted, new StatementDelegate(D囲い句));
 			actions.Add(PhraseTypes.丸囲い句, new StatementDelegate(D囲い句));
 			actions.Add(PhraseTypes.未知語字句, new StatementDelegate(D未知語字句));
 			actions.Add(PhraseTypes.ひらがな字句, new StatementDelegate(D未知語字句));
 			actions.Add(PhraseTypes.ParseErrorPhrase, new StatementDelegate(DParseErrorPhrase));
 			actions.Add(PhraseTypes.IncompleteStatement, new StatementDelegate(DIncompleteStatement));
-			actions.Add(PhraseTypes.IncompleteStatement2, new StatementDelegate(DIncompleteStatement));
+			actions.Add(PhraseTypes.GenerateIncomplete, new StatementDelegate(DIncompleteStatement));
 
 			actions.Add(PhraseTypes.KeywordToken, new StatementDelegate(DKeywordToken));
 		}
@@ -491,7 +489,7 @@ void artecRobotSetup() {
 				else if (phrase is 助詞字句)
 				{
 				}
-				else if (phrase is 動詞字句 && (phrase as 動詞字句).Verb is 予約済み動詞定義)
+				else if (phrase is 動詞字句 && (phrase as 動詞字句).Verb is 予約動詞語)
 				{
 				}
 				else
@@ -675,7 +673,7 @@ void artecRobotSetup() {
 			GenerateStruct(st.Sentence.Phrases, writer);
 
 			//各case:
-			var codeList = st.CodeList;
+			var codeList = st.Statements;
 			for (int i = 0; i < codeList.Count; i++)
 			{
 				ICodeElement element = codeList[i];
@@ -721,7 +719,7 @@ void artecRobotSetup() {
 		/// <param name="builder"></param>
 		private void GSWith(IStatement statement, StringWriter writer)
 		{
-			var st = statement as WithStatement;
+			var st = statement as 対象限定文;
 
 			Generate(st.Phrases, writer);
 			Generate(st.Statements, writer);
@@ -745,7 +743,7 @@ void artecRobotSetup() {
 
 		#region Phraseデリゲートハンドリング
 
-		private void D文字列定数字句(IStatement statement, StringWriter writer)
+		private void D文字列字句片(IStatement statement, StringWriter writer)
 		{
 		}
 

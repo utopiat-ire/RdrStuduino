@@ -38,7 +38,7 @@ namespace Produire.Translator
 
 			PluginManager pluginManager = new PluginManager();
 			var plugin = PluginManager.Load(typeof(Program).Assembly) as PNamespacePlugin;
-			pluginManager.AddStandard(plugin);
+			PluginManager.AddStandard(plugin);
 
 			string rdrName = Path.GetFileNameWithoutExtension(rdrfile);
 			string rdrDir = Path.GetDirectoryName(rdrfile);
