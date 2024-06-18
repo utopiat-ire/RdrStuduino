@@ -42,17 +42,9 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Produire.Core, Version=0.1.0.0, Culture=neutral, PublicKeyToken=cdfd51753ea89a11, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Produire.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="utopiat.Host, Version=0.1.0.0, Culture=neutral, PublicKeyToken=cdfd51753ea89a11, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\utopiat.Host.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArduinoCodeGenerator.cs" />
